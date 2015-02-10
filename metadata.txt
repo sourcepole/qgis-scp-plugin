@@ -1,0 +1,63 @@
+# This file contains metadata for your plugin. Beginning
+# with version 1.8 this is the preferred way to supply information about a
+# plugin. The current method of embedding metadata in __init__.py will
+# be supported until version 2.0
+
+# This file should be included when you package your plugin.
+
+# Mandatory items:
+
+
+[general]
+name=SCP-Plugin
+qgisMinimumVersion=2.0
+description=Plugin for Structured Conservation Planning of Marine Protected Areas
+version=1.0
+author=Sandro Mani, Sourcepole AG
+email=smani@sourcepole.ch
+
+# end of mandatory metadata
+
+# Optional items:
+
+# Uncomment the following line and add your changelog entries:
+changelog= 
+ Rev 1.0.0
+   - Set version to 1.0
+ Rev 0.3.5
+   - Fix manual not displaying in Adobe Acrobat
+ Rev 0.3.4
+   - Fix about python error
+ Rev 0.3.3
+   - Fix case of plugin folder name to avoid confusing the plugin manager
+ Rev 0.3.2
+   - fix referencing symbologies of deleted c++ objects
+ Rev 0.3.1
+   - fix reset symbology behaviour
+   - warn user if no ellipsoid is selected
+ Rev 0.3
+   - remove single-feature requirement for polygon layers
+   - display the area in map units if crs transforms are disabled
+   - add button to reset the layer symbology
+ Rev 0.2.1
+   - fix backwards compatibility issue with QgsDistanceArea.setSourceCrs
+ Rev 0.2.0
+   - add possibility to specify a land layer to clip the MPA layer
+   - show total area and sum of values of quantifying attribute in analysis result
+ Rev 0.1.1
+   - json file extension added when missing in filename
+   - symbolLayer outlinecolor bug fixed
+
+# tags are comma separated with spaces allowed
+tags=
+
+homepage=https://github.com/sourcepole/qgis-scp-plugin
+tracker=https://github.com/sourcepole/qgis-scp-plugin/issues
+repository=https://github.com/sourcepole/qgis-scp-plugin
+icon=icons/icon.png
+# experimental flag
+experimental=False
+
+# deprecated flag (applies to the whole plugin, not just a single version
+deprecated=False
+

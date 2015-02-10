@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScpPlugin</class>
+ <widget class="QDialog" name="ScpPlugin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>720</width>
+    <height>618</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>NIWA SCP Plugin</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Help</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab_input">
+      <attribute name="title">
+       <string>Input</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_addPointLayer">
+         <property name="text">
+          <string>Add point layer:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_addPolygonLayer">
+         <property name="text">
+          <string>Add polygon layer:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableWidget_pointLayers">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Desired %</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Quantifying field</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Inv</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string/>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBox_addPolygonLayer">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QTableWidget" name="tableWidget_polygonLayers">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <property name="columnCount">
+          <number>4</number>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Desired %</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Inv</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string/>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="comboBox_selectMPA">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboBox_addPointLayer">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_selectMPA">
+         <property name="text">
+          <string>Select MPA layer:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <widget class="QDialogButtonBox" name="buttonBox_inputTab">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Open|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="comboBox_selectLand">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="checkBox_land">
+         <property name="text">
+          <string>Clip with land layer:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_result">
+      <attribute name="title">
+       <string>Result</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_pointLayers">
+         <property name="text">
+          <string>Point layers:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableWidget_pointLayersResult">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Total value</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Desired %</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Actual %</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Difference</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_polygonLayers">
+         <property name="text">
+          <string>Polygon layers:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableWidget_polygonLayersResult">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <property name="columnCount">
+          <number>5</number>
+         </property>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Area</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Desired %</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Actual %</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Difference</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_MPAArea">
+            <property name="text">
+             <string>MPA area:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_MPAAreaValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_crsWarning">
+         <property name="styleSheet">
+          <string notr="true">QLabel { background: orange; border-radius: 5px; padding: 2px}</string>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning&lt;/span&gt;: the input layer CRS differ and on the fly CRS transformations are disabled. The analysis results are likely inaccurate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_unitsWarning">
+         <property name="styleSheet">
+          <string notr="true">QLabel { background: cyan; border-radius: 5px; padding: 2px}</string>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note&lt;/span&gt;: For areas to be displayed in square kilometers, on the fly CRS transformations need to be enabled and an appropriate ellipsoid selected in &lt;span style=&quot; font-style:italic;&quot;&gt;Settings-&amp;gt;Project Properties-&amp;gt;General&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_mpaClipped">
+         <property name="styleSheet">
+          <string notr="true">QLabel { background: cyan; border-radius: 5px; padding: 2px}</string>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note&lt;/span&gt;: the MPA layer overlaps with the land layer, and the clipped MPA geometry was used for the analysis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox_resultTab">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Save</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

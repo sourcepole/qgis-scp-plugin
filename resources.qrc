@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/plugins/scpplugin" >
+        <file>icons/icon.png</file>
+        <file>icons/list-remove.png</file>
+    </qresource>
+</RCC>
