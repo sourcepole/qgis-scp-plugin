@@ -1,0 +1,6 @@
+Plugin for Structured Conservation Planning of Marine Protected Areas
+=====================================================================
+
+The objective of the plugin is to add an SCP analysis functionality to QGIS,
+which assesses whether a proposed Marine Protection Area (MPA) achieves the
+area and value targets of given polygons and points of interest.
