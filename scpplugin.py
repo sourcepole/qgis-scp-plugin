@@ -20,17 +20,18 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
 from qgis.core import *
 from qgis.utils import home_plugin_path
 # Initialize Qt resources from file resources.py
-import resources_rc
+from . import resources_rc
 # Import the code for the dialog
-from forms.ui_scpplugin import ScpPluginDialog
-from about.doAbout import DlgAbout
-from input_manager import InputManager
-from result_manager import ResultManager
+from .forms.ui_scpplugin import ScpPluginDialog
+from .about.doAbout import DlgAbout
+from .input_manager import InputManager
+from .result_manager import ResultManager
 import os.path
 import shutil
 import platform
@@ -53,7 +54,8 @@ class ScpPlugin:
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
         locale = QSettings().value("locale/userLocale")[0:2]
-        localePath = os.path.join(self.plugin_dir, 'i18n', 'scpplugin_{}.qm'.format(locale))
+        localePath = os.path.join(self.plugin_dir,
+                                  'i18n', 'scpplugin_{}.qm'.format(locale))
 
         if os.path.exists(localePath):
             self.translator = QTranslator()
@@ -67,9 +69,10 @@ class ScpPlugin:
         self.inputManager = InputManager(self.dlg, iface)
         self.resultManager = ResultManager(self.dlg, iface)
         self.inputManager.run.connect(self.resultManager.computeResult)
-        # FIXME: QGIS should expose a signal which is emitted when a project is closed
-        QgsMapLayerRegistry.instance().removeAll.connect(self.inputManager.clear)
-        QgsMapLayerRegistry.instance().removeAll.connect(self.resultManager.clear)
+        # FIXME: QGIS should expose a signal which is emitted when a project
+        # is closed
+        QgsProject().instance().removeAll.connect(self.inputManager.clear)
+        QgsProject().instance().removeAll.connect(self.resultManager.clear)
 
     def initGui(self):
         # Create action that will start plugin configuration
@@ -77,7 +80,8 @@ class ScpPlugin:
             QIcon(":/plugins/scpplugin/icons/icon.png"),
             u"SCP Plugin", self.iface.mainWindow())
 
-        self.actionAbout = QAction(QIcon(""),  u"About",  self.iface.mainWindow() )
+        self.actionAbout = QAction(
+            QIcon(""), u"About", self.iface.mainWindow())
 
         # connect the action to the run method
         self.action.triggered.connect(self.run)
