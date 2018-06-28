@@ -12,7 +12,7 @@
 name=SCP-Plugin
 qgisMinimumVersion=3.0
 description=Plugin for Structured Conservation Planning of Marine Protected Areas
-version=1.0
+version=2.0
 author=Sandro Mani, Sourcepole AG
 email=smani@sourcepole.ch
 
@@ -22,6 +22,8 @@ email=smani@sourcepole.ch
 
 # Uncomment the following line and add your changelog entries:
 changelog=
+ Rev 2.0.0
+   - QGIS 3 Migration
  Rev 1.0.0
    - Set version to 1.0
  Rev 0.3.5
