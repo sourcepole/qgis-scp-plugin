@@ -4,8 +4,9 @@
 Module managing the input part of the SCP plugin.
 """
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
 from qgis.core import *
 import json
 import os
@@ -16,9 +17,11 @@ def setComboItemEnabled(combo, id, enabled):
     if row > -1:
         item = combo.model().item(row)
         if not enabled:
-            item.setFlags(item.flags() & ~(Qt.ItemIsSelectable | Qt.ItemIsEnabled))
+            item.setFlags(item.flags() & ~(
+                Qt.ItemIsSelectable | Qt.ItemIsEnabled))
         else:
-            item.setFlags(item.flags() | Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            item.setFlags(item.flags() |
+                          Qt.ItemIsSelectable | Qt.ItemIsEnabled)
 
 
 class ComboItemDelegate(QItemDelegate):
@@ -42,7 +45,8 @@ class ComboItemDelegate(QItemDelegate):
         row = editor.currentIndex()
         if row > -1:
             if model.data(index, Qt.UserRole) != editor.itemData(row):
-                setComboItemEnabled(self.combo, model.data(index, Qt.UserRole), True)
+                setComboItemEnabled(
+                    self.combo, model.data(index, Qt.UserRole), True)
                 setComboItemEnabled(self.combo, editor.itemData(row), False)
                 self.valueChanged.emit()
                 self.table.item(index.row(), 0).setBackground(QBrush())
@@ -57,7 +61,7 @@ class PointComboItemDelegate(ComboItemDelegate):
         fieldCombo = self.table.cellWidget(index.row(), 2)
         fieldCombo.clear()
         if row > -1:
-            layer = QgsMapLayerRegistry.instance().mapLayer(editor.itemData(row))
+            layer = QgsProject().instance().mapLayer(editor.itemData(row))
             for field in layer.dataProvider().fields():
                 if not field.name() == "id":
                     fieldCombo.addItem(field.name())
@@ -84,48 +88,77 @@ class InputManager(QObject):
         self.mpaCombo = self.ui.comboBox_selectMPA
         self.mpaCombo.curId = None
         self.mpaCombo.setModel(self.polyCombo.model())
-        self.mpaCombo.currentIndexChanged.connect(lambda: self.__singleLayerSelected(self.mpaCombo))
+        self.mpaCombo.currentIndexChanged.connect(
+            lambda: self.__singleLayerSelected(self.mpaCombo))
 
         self.landCombo = self.ui.comboBox_selectLand
         self.landCombo.curId = None
         self.landCombo.setModel(self.polyCombo.model())
-        self.landCombo.currentIndexChanged.connect(lambda: self.__singleLayerSelected(self.landCombo))
+        self.landCombo.currentIndexChanged.connect(
+            lambda: self.__singleLayerSelected(self.landCombo))
 
         self.ui.checkBox_land.toggled.connect(self.__enableLandLayer)
 
-        self.analyzeBtn = self.ui.buttonBox_inputTab.addButton(u"Run analysis", QDialogButtonBox.ApplyRole)
-        self.analyzeBtn.clicked.connect(lambda: self.run.emit(self.getPointLayerInput(), self.getPolygonLayerInput(), self.mpaCombo.curId, self.landCombo.curId))
+        self.analyzeBtn = self.ui.buttonBox_inputTab.addButton(
+            u"Run analysis", QDialogButtonBox.ApplyRole)
+        self.analyzeBtn.clicked.connect(
+            lambda: self.run.emit(self.getPointLayerInput(),
+                                  self.getPolygonLayerInput(),
+                                  self.mpaCombo.curId,
+                                  self.landCombo.curId))
         self.analyzeBtn.setEnabled(False)
 
         self.pointCombo.setEditable(True)
-        self.pointCombo.lineEdit().setPlaceholderText(u"Select point layer to add")
+        self.pointCombo.lineEdit().setPlaceholderText(
+            u"Select point layer to add")
         self.pointCombo.lineEdit().setFocusPolicy(Qt.NoFocus)
-        self.pointCombo.activated.connect(lambda idx: self.__addLayerSelected(idx, self.pointCombo, self.__addPointLayer))
-        self.pointTable.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        self.pointTable.horizontalHeader().setResizeMode(3, QHeaderView.Fixed)
+        self.pointCombo.activated.connect(
+            lambda idx: self.__addLayerSelected(idx,
+                                                self.pointCombo,
+                                                self.__addPointLayer))
+        self.pointTable.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Stretch)
+        self.pointTable.horizontalHeader().setSectionResizeMode(
+            3, QHeaderView.Fixed)
         self.pointTable.setColumnWidth(3, 24)
-        self.pointTable.horizontalHeader().setResizeMode(4, QHeaderView.Fixed)
+        self.pointTable.horizontalHeader().setSectionResizeMode(
+            4, QHeaderView.Fixed)
         self.pointTable.setColumnWidth(4, 24)
-        self.pointTableCol0Delegate = PointComboItemDelegate(self.pointCombo, self.pointTable)
-        self.pointTable.setItemDelegateForColumn(0, self.pointTableCol0Delegate)
-        self.pointTable.itemDelegateForColumn(0).valueChanged.connect(self.__layerChanged)
+        self.pointTableCol0Delegate = PointComboItemDelegate(
+            self.pointCombo, self.pointTable)
+        self.pointTable.setItemDelegateForColumn(
+            0, self.pointTableCol0Delegate)
+        self.pointTable.itemDelegateForColumn(0).valueChanged.connect(
+            self.__layerChanged)
 
         self.polyCombo.setEditable(True)
-        self.polyCombo.lineEdit().setPlaceholderText(u"Select polygon layer to add")
+        self.polyCombo.lineEdit().setPlaceholderText(
+            u"Select polygon layer to add")
         self.polyCombo.lineEdit().setFocusPolicy(Qt.NoFocus)
-        self.polyCombo.activated.connect(lambda idx: self.__addLayerSelected(idx, self.polyCombo, self.__addPolygonLayer))
-        self.polyTable.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        self.polyTable.horizontalHeader().setResizeMode(2, QHeaderView.Fixed)
+        self.polyCombo.activated.connect(
+            lambda idx: self.__addLayerSelected(idx,
+                                                self.polyCombo,
+                                                self.__addPolygonLayer))
+        self.polyTable.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Stretch)
+        self.polyTable.horizontalHeader().setSectionResizeMode(
+            2, QHeaderView.Fixed)
         self.polyTable.setColumnWidth(2, 24)
-        self.polyTable.horizontalHeader().setResizeMode(3, QHeaderView.Fixed)
+        self.polyTable.horizontalHeader().setSectionResizeMode(
+            3, QHeaderView.Fixed)
         self.polyTable.setColumnWidth(3, 24)
-        self.polyTableCol0Delegate = ComboItemDelegate(self.polyCombo, self.polyTable)
+        self.polyTableCol0Delegate = ComboItemDelegate(
+            self.polyCombo, self.polyTable)
         self.polyTable.setItemDelegateForColumn(0, self.polyTableCol0Delegate)
-        self.polyTable.itemDelegateForColumn(0).valueChanged.connect(self.__layerChanged)
+        self.polyTable.itemDelegateForColumn(0).valueChanged.connect(
+            self.__layerChanged)
 
-        self.ui.buttonBox_inputTab.button(QDialogButtonBox.Save).clicked.connect(self.__save)
-        self.ui.buttonBox_inputTab.button(QDialogButtonBox.Open).clicked.connect(self.__open)
-        self.ui.buttonBox_inputTab.button(QDialogButtonBox.Reset).clicked.connect(self.clear)
+        self.ui.buttonBox_inputTab.button(
+            QDialogButtonBox.Save).clicked.connect(self.__save)
+        self.ui.buttonBox_inputTab.button(
+            QDialogButtonBox.Open).clicked.connect(self.__open)
+        self.ui.buttonBox_inputTab.button(
+            QDialogButtonBox.Reset).clicked.connect(self.clear)
 
     def __layerChanged(self):
         self.inputChanged = True
@@ -141,7 +174,7 @@ class InputManager(QObject):
         combo.setCurrentIndex(-1)
 
     def __singleLayerSelected(self, combo):
-        combo.setEditable(False) # Clear error state from __open
+        combo.setEditable(False)  # Clear error state from __open
         if combo.curId:
             setComboItemEnabled(combo, combo.curId, True)
         idx = combo.currentIndex()
@@ -164,8 +197,9 @@ class InputManager(QObject):
     def __setSpinBoxSuffix(self, spinBox, inside):
         spinBox.setSuffix(u"% inside MPA" if inside else u"% outside MPA")
 
-    def __addPointLayer(self, layerId, targetPerc=None, fieldName=None, invert=False):
-        layer = QgsMapLayerRegistry.instance().mapLayer(layerId)
+    def __addPointLayer(self, layerId, targetPerc=None, fieldName=None,
+                        invert=False):
+        layer = QgsProject().instance().mapLayer(layerId)
         layerName = layer.name() if layer else layerId
 
         setComboItemEnabled(self.pointCombo, layerId, False)
@@ -202,18 +236,22 @@ class InputManager(QObject):
         invertCbx = QCheckBox()
         invertCbx.setChecked(invert)
         invertCbx.clicked.connect(self.__setInputChanged)
-        invertCbx.clicked.connect(lambda: self.__setSpinBoxSuffix(spinBox, invertCbx.isChecked()))
+        invertCbx.clicked.connect(
+            lambda: self.__setSpinBoxSuffix(
+                spinBox, invertCbx.isChecked()))
         self.__setSpinBoxSuffix(spinBox, invertCbx.isChecked())
         self.pointTable.setCellWidget(insRow, 3, invertCbx)
 
         removeBtn = QPushButton()
         removeBtn.setFlat(True)
         removeBtn.setIcon(QIcon(":/plugins/scpplugin/icons/list-remove.png"))
-        removeBtn.clicked.connect(lambda: self.__removeItem(self.pointTable, nameItem, self.pointCombo))
+        removeBtn.clicked.connect(
+            lambda: self.__removeItem(self.pointTable,
+                                      nameItem, self.pointCombo))
         self.pointTable.setCellWidget(insRow, 4, removeBtn)
 
     def __addPolygonLayer(self, layerId, targetPerc=None, invert=False):
-        layer = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        layer = QgsProject().instance().mapLayer(layerId)
         layerName = layer.name() if layer else layerId
 
         setComboItemEnabled(self.polyCombo, layerId, False)
@@ -239,14 +277,17 @@ class InputManager(QObject):
         invertCbx = QCheckBox()
         invertCbx.setChecked(invert)
         invertCbx.clicked.connect(self.__setInputChanged)
-        invertCbx.clicked.connect(lambda: self.__setSpinBoxSuffix(spinBox, not invertCbx.isChecked()))
+        invertCbx.clicked.connect(
+            lambda: self.__setSpinBoxSuffix(spinBox,
+                                            not invertCbx.isChecked()))
         self.__setSpinBoxSuffix(spinBox, not invertCbx.isChecked())
         self.polyTable.setCellWidget(insRow, 2, invertCbx)
 
         removeBtn = QPushButton()
         removeBtn.setFlat(True)
         removeBtn.setIcon(QIcon(":/plugins/scpplugin/icons/list-remove.png"))
-        removeBtn.clicked.connect(lambda: self.__removeItem(self.polyTable, nameItem, self.polyCombo))
+        removeBtn.clicked.connect(lambda: self.__removeItem(
+            self.polyTable, nameItem, self.polyCombo))
         self.polyTable.setCellWidget(insRow, 3, removeBtn)
 
     def __removeItem(self, table, item, combo):
@@ -259,25 +300,32 @@ class InputManager(QObject):
 
     def updateLayers(self):
         """
-        Updates the list of layers selectable in the input dialog and ensures the selected ones are valid
+        Updates the list of layers selectable in the input dialog and ensures
+        the selected ones are valid
         """
-        # Block signals to avoid setting the dirty flag when populating the combobox
+        # Block signals to avoid setting the dirty flag when populating the
+        # combobox
         self.mpaCombo.blockSignals(True)
         self.landCombo.blockSignals(True)
         self.pointCombo.clear()
         self.polyCombo.clear()
-        layers = QgsMapLayerRegistry.instance().mapLayers().iteritems()
-        for (id, layer) in layers:
-            if layer.type() == QgsMapLayer.VectorLayer:
-                geomType = layer.geometryType()
-                if geomType == QGis.Point:
-                    self.pointCombo.addItem(layer.name(), id)
-                elif geomType == QGis.Polygon and layer.featureCount() > 0:
-                    self.polyCombo.addItem(layer.name(), id)
+        layers = QgsProject().instance().mapLayers()
+        for key in layers:
+            if layers[key].type() == QgsMapLayer.VectorLayer:
+                geomType = layers[key].geometryType()
+                if geomType == QgsWkbTypes.PointGeometry:
+                    self.pointCombo.addItem(layers[key].name(),
+                                            layers[key].id())
+                elif geomType == QgsWkbTypes.PolygonGeometry and layers[
+                        key].featureCount() > 0:
+                    self.polyCombo.addItem(layers[key].name(),
+                                           layers[key].id())
         self.pointCombo.setCurrentIndex(-1)
         self.polyCombo.setCurrentIndex(-1)
-        self.mpaCombo.setCurrentIndex(self.mpaCombo.findData(self.mpaCombo.curId))
-        self.landCombo.setCurrentIndex(self.landCombo.findData(self.landCombo.curId))
+        self.mpaCombo.setCurrentIndex(
+            self.mpaCombo.findData(self.mpaCombo.curId))
+        self.landCombo.setCurrentIndex(
+            self.landCombo.findData(self.landCombo.curId))
         self.mpaCombo.blockSignals(False)
         self.landCombo.blockSignals(False)
 
@@ -288,9 +336,11 @@ class InputManager(QObject):
         self.__validateInput()
 
     def __validateInput(self):
-        valid = (self.pointTable.rowCount() > 0 or self.polyTable.rowCount() > 0)
+        valid = (
+            self.pointTable.rowCount() > 0 or self.polyTable.rowCount() > 0)
         valid &= self.mpaCombo.curId is not None
-        valid &= (not self.ui.checkBox_land.isChecked() or self.landCombo.curId is not None)
+        valid &= (
+            not self.ui.checkBox_land.isChecked() or self.landCombo.curId is not None)
         for row in range(0, self.pointTable.rowCount()):
             valid &= (self.pointTable.item(row, 0).background() != Qt.red)
         for row in range(0, self.polyTable.rowCount()):
@@ -303,7 +353,8 @@ class InputManager(QObject):
                 combo.setEditable(True)
                 combo.lineEdit().setFocusPolicy(Qt.NoFocus)
                 combo.lineEdit().setText(combo.curId)
-                combo.lineEdit().setStyleSheet("QLineEdit { background-color: red; }")
+                combo.lineEdit().setStyleSheet(
+                    "QLineEdit { background-color: red; }")
         else:
             setComboItemEnabled(combo, combo.curId, False)
 
@@ -311,7 +362,7 @@ class InputManager(QObject):
         row = 0
         for row in range(0, table.rowCount()):
             layerId = table.item(row, 0).data(Qt.UserRole)
-            layer = QgsMapLayerRegistry.instance().mapLayer(layerId)
+            layer = QgsProject().instance().mapLayer(layerId)
             if not layer:
                 table.item(row, 0).setText(layerId)
                 table.item(row, 0).setBackground(Qt.red)
@@ -322,8 +373,12 @@ class InputManager(QObject):
         if not filename:
             filename = self.inputFile
             if not filename:
-                filename = QSettings().value("ScpPlugin/lastLocation", QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation) + os.sep)
-            filename = QFileDialog.getSaveFileName(self.ui, u"Save SCP plan", filename, u"JSON files (*.json)")
+                filename = QSettings().value(
+                    "ScpPlugin/lastLocation",
+                    QStandardPaths.writableLocation(
+                        QStandardPaths.DocumentsLocation) + os.sep)
+            filename = QFileDialog.getSaveFileName(
+                self.ui, u"Save SCP plan", filename, u"JSON files (*.json)")[0]
         if filename:
             base, ext = os.path.splitext(filename)
             if ext.lower() != '.json':
@@ -338,46 +393,66 @@ class InputManager(QObject):
                 fh.write(json.dumps(data))
                 self.inputChanged = False
                 self.inputFile = filename
-                QSettings().setValue("ScpPlugin/lastLocation", os.path.dirname(filename))
+                QSettings().setValue(
+                    "ScpPlugin/lastLocation", os.path.dirname(filename))
                 return True
-            except Exception, e:
-                QMessageBox.critical(self.ui, u"Failed to save SCP plan", "The SCP plan could not be saved:\n%s" % e)
+            except Exception as e:
+                QMessageBox.critical(
+                    self.ui,
+                    u"Failed to save SCP plan",
+                    "The SCP plan could not be saved:\n%s" % e.args[0])
         return False
 
     def __open(self, filename):
         if self.clear():
-            dir = QSettings().value("ScpPlugin/lastLocation", QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation) + os.sep)
-            filename = QFileDialog.getOpenFileName(self.ui, u"Open SCP plan", dir, u"JSON files (*.json)")
+            dir = QSettings().value(
+                "ScpPlugin/lastLocation",
+                QStandardPaths.writableLocation(
+                    QStandardPaths.DocumentsLocation) + os.sep)
+            filename = QFileDialog.getOpenFileName(
+                self.ui, u"Open SCP plan", dir, u"JSON files (*.json)")[0]
             if filename:
                 try:
                     fh = open(filename, "r")
                     data = json.loads(fh.read())
                     for layer in data["PointLayers"]:
-                        self.__addPointLayer(layer[0], layer[1], layer[2], layer[3])
+                        self.__addPointLayer(
+                            layer[0], layer[1], layer[2], layer[3])
                     for layer in data["PolygonLayers"]:
                         self.__addPolygonLayer(layer[0], layer[1], layer[2])
                     self.mpaCombo.curId = data["MPALayer"]
-                    self.mpaCombo.setCurrentIndex(self.mpaCombo.findData(self.mpaCombo.curId))
+                    self.mpaCombo.setCurrentIndex(
+                        self.mpaCombo.findData(self.mpaCombo.curId))
                     self.landCombo.curId = data["LandLayer"]
-                    self.landCombo.setCurrentIndex(self.landCombo.findData(self.landCombo.curId))
-                    self.ui.checkBox_land.setChecked(self.landCombo.curId is not None)
+                    self.landCombo.setCurrentIndex(self.landCombo.findData(
+                        self.landCombo.curId))
+                    self.ui.checkBox_land.setChecked(
+                        self.landCombo.curId is not None)
                     self.inputFile = filename
-                    QSettings().setValue("ScpPlugin/lastLocation", os.path.dirname(filename) + os.sep)
+                    QSettings().setValue(
+                        "ScpPlugin/lastLocation",
+                        os.path.dirname(filename) + os.sep)
                     self.inputChanged = False
                     self.__validateCombo(self.mpaCombo)
                     self.__validateCombo(self.landCombo)
                     self.__validateTable(self.pointTable, self.pointCombo)
                     self.__validateTable(self.polyTable, self.polyCombo)
                     self.__validateInput()
-                except Exception, e:
-                    QMessageBox.critical(self.ui, u"Failed to load SCP plan", "The SCP plan could not be loaded:\n%s" % e)
+                except Exception as e:
+                    QMessageBox.critical(
+                        self.ui,
+                        u"Failed to load SCP plan",
+                        "The SCP plan could not be loaded:\n%s" % e.args[0])
 
     def clear(self):
         if self.__saveIfChanged():
             while self.pointTable.rowCount() > 0:
-                self.__removeItem(self.pointTable, self.pointTable.item(0, 0), self.pointCombo)
+                self.__removeItem(
+                    self.pointTable, self.pointTable.item(0, 0),
+                    self.pointCombo)
             while self.polyTable.rowCount() > 0:
-                self.__removeItem(self.polyTable, self.polyTable.item(0, 0), self.polyCombo)
+                self.__removeItem(
+                    self.polyTable, self.polyTable.item(0, 0), self.polyCombo)
             self.mpaCombo.setCurrentIndex(-1)
             self.mpaCombo.setEditable(False)
             self.mpaCombo.curId = None
@@ -394,7 +469,8 @@ class InputManager(QObject):
     def getPointLayerInput(self):
         """
         Returns a list of input point layer data tuples:
-            [(layerId1, targetPerc1, quantField1, invert1), (layerId2, targetPerc2, quantField2, invert2), ...]
+            [(layerId1, targetPerc1, quantField1, invert1),
+            (layerId2, targetPerc2, quantField2, invert2), ...]
         """
         list = []
         for row in range(0, self.pointTable.rowCount()):
@@ -409,7 +485,8 @@ class InputManager(QObject):
     def getPolygonLayerInput(self):
         """
         Returns a list of input polygon layer data tuples:
-            [(layerId1, targetPerc1, invert1), (layerId2, targetPerc2, invert2), ...]
+            [(layerId1, targetPerc1, invert1),
+            (layerId2, targetPerc2, invert2), ...]
         """
         list = []
         for row in range(0, self.polyTable.rowCount()):
@@ -421,8 +498,9 @@ class InputManager(QObject):
 
     def __saveIfChanged(self):
         if self.inputChanged is True:
-            if QMessageBox.question(self.ui, u"SCP Input Modified", \
-               u"The SCP input dialog has unsaved changes. Do you want to save them?", \
-               QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes) == QMessageBox.Yes:
-                return self.__save(self.inputFile)
+            if QMessageBox.question(
+                self.ui, u"SCP Input Modified",
+                u"The SCP input dialog has unsaved changes. Do you want to save them?",
+                    QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes) == QMessageBox.Yes:
+                    return self.__save(self.inputFile)
         return True

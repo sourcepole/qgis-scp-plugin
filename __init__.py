@@ -20,7 +20,9 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+
+
 def classFactory(iface):
     # load ScpPlugin class from file ScpPlugin
-    from scpplugin import ScpPlugin
+    from .scpplugin import ScpPlugin
     return ScpPlugin(iface)
