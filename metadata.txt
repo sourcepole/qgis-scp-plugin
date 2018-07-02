@@ -12,6 +12,7 @@
 name=SCP-Plugin
 qgisMinimumVersion=3.0
 description=Plugin for Structured Conservation Planning of Marine Protected Areas
+about=Plugin for Structured Conservation Planning of Marine Protected Areas
 version=2.0
 author=Sandro Mani, Sourcepole AG
 email=smani@sourcepole.ch
